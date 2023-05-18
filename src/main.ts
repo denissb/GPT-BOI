@@ -9,15 +9,15 @@ bot.command('start', async (ctx) => {
     await ctx.reply(JSON.stringify(ctx.message, null, 2));
 });
 
-bot.on(message('text'), async ctx => {
+bot.on(message('text'), async (ctx) => {
     await ctx.reply(JSON.stringify(ctx.message, null, 2));
 });
 
-bot.on(message('voice'), async ctx => {
+bot.on(message('voice'), async (ctx) => {
     try {
         // await ctx.reply(JSON.stringify(ctx.message.voice, null, 2));
         const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
-        const userId =  ctx.message.from.id;
+        const userId = ctx.message.from.id;
         const oggPath = await ogg.create(link.href, String(userId));
     } catch (e) {
         console.error('Error on voice message', e);

@@ -16,7 +16,7 @@ class OggConverter {
             const response = await axios({
                 method: 'get',
                 url,
-                responseType: 'stream'
+                responseType: 'stream',
             });
             return new Promise((resolve, reject) => {
                 const stream = createWriteStream(oggPath);
