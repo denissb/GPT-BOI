@@ -1,11 +1,11 @@
 {
   "name": "gpt-bot",
   "version": "1.0.0",
-  "description": "",
-  "main": "dist/main.js",
+  "description": "Having some GTP fun",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/main.ts",
+    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' ./src/main.ts",
     "build": "tsc",
     "start": "node ./dist/main.js"
   },
@@ -14,10 +14,18 @@
   "license": "ISC",
   "devDependencies": {
     "@tsconfig/node19": "^2.0.1",
+    "@types/config": "^3.3.0",
     "@types/node": "^20.1.7",
     "cross-env": "^7.0.3",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
+    "axios": "^1.4.0",
+    "config": "^3.3.9",
+    "fluent-ffmpeg": "^2.1.2",
+    "telegraf": "^4.12.2"
   }
 }
