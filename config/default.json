@@ -1,3 +1,4 @@
 {
-    "TELEGRAM_TOKEN": ""
+    "TELEGRAM_TOKEN": "enter-your-token",
+    "OPENAI_KEY": "enter-your-key"
 }
