@@ -4,7 +4,6 @@ import { code, pre } from 'telegraf/format';
 import config from 'config';
 import { ogg } from './convertors/ogg';
 import { openAI } from './openAI';
-import { Update, Message } from 'telegraf/typings/core/types/typegram';
 import { ChatCompletionRequestMessage } from 'openai';
 
 interface SessionData {

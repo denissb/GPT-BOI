@@ -3,18 +3,18 @@
   "version": "1.0.0",
   "description": "Having some GTP fun",
   "type": "module",
-  "node" : ">=18.0.0 <=20.0.0",
+  "node": ">=18.0.0 <=20.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "export NODE_ENV=dev && nodemon --watch './**/*.ts' --exec 'ts-node' ./src/main.ts",
+    "start": "cross-env NODE_ENV=prod node ./dist/main.js",
+    "dev": "cross-env NODE_ENV=dev nodemon --watch './**/*.ts' --exec 'ts-node' ./src/main.ts",
     "build": "tsc",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
-    "start": "node ./dist/main.js",
     "prettier:fix": "prettier --write ./src"
   },
   "keywords": [],
-  "author": "",
+  "author": "DenissB",
   "license": "ISC",
   "devDependencies": {
     "@tsconfig/node19": "^2.0.1",
