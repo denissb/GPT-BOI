@@ -39,7 +39,6 @@ bot.on(message('text'), async (ctx) => {
         await ctx.reply(code('Message recived, Processing...'));
 
         const text = ctx.message.text;
-        await ctx.reply(code(`You said: ${text}`));
 
         const message = {
             role: openAI.roles.User,
