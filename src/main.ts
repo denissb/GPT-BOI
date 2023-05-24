@@ -34,7 +34,36 @@ bot.command('new', async (ctx) => await initNewSession(ctx));
 bot.command('start', async (ctx) => await initNewSession(ctx));
 
 bot.on(message('text'), async (ctx) => {
-    await ctx.reply(JSON.stringify(ctx.message, null, 2));
+    ctx.session ??= INITIAL_SESSION;
+    try {
+        await ctx.reply(code('Message recived, Processing...'));
+
+        const text = ctx.message.text;
+        await ctx.reply(code(`You said: ${text}`));
+
+        const message = {
+            role: openAI.roles.User,
+            content: text,
+        };
+
+        ctx.session.messages.push(message);
+
+        const response = await openAI.chat(ctx.session.messages);
+        const replyMessage = {
+            role: openAI.roles.Assistant,
+            content: response?.content || '',
+        };
+
+        ctx.session.messages.push(replyMessage);
+
+        if (response) {
+            await ctx.reply(response.content);
+        } else {
+            await ctx.reply(code('No response..'));
+        }
+    } catch (e) {
+        console.error('Error on voice message', e);
+    }
 });
 
 bot.on(message('voice'), async (ctx) => {
