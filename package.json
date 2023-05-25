@@ -1,14 +1,13 @@
 {
-  "name": "gpt-bot",
+  "name": "gpt-boi",
   "version": "1.0.0",
   "description": "Having some GTP fun",
   "type": "module",
   "node": ">=18.0.0 <=20.0.0",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "cross-env NODE_ENV=prod node ./dist/main.js",
+    "start": "cross-env NODE_ENV=prod ts-node --transpile-only ./src/main.ts",
     "dev": "cross-env NODE_ENV=dev nodemon --watch './**/*.ts' --exec 'ts-node' ./src/main.ts",
-    "build": "tsc",
     "lint": "eslint src/**/*.ts",
     "lint:fix": "eslint src/**/*.ts --fix",
     "prettier:fix": "prettier --write ./src"
@@ -27,7 +26,6 @@
     "eslint": "^8.40.0",
     "nodemon": "^2.0.22",
     "prettier": "^2.8.8",
-    "ts-node": "^10.9.1",
     "typescript": "^5.0.4"
   },
   "dependencies": {
@@ -36,6 +34,7 @@
     "config": "^3.3.9",
     "fluent-ffmpeg": "^2.1.2",
     "openai": "^3.2.1",
-    "telegraf": "^4.12.2"
+    "telegraf": "^4.12.2",
+    "ts-node": "^10.9.1"
   }
 }
