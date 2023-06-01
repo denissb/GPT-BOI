@@ -1,7 +1,7 @@
 {
   "name": "gpt-boi",
   "version": "1.0.0",
-  "description": "Having some GTP fun",
+  "description": "Having some GPT fun",
   "type": "module",
   "node": ">=18.0.0 <=20.0.0",
   "scripts": {
