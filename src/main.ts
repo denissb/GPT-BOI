@@ -2,9 +2,10 @@ import { Context, NarrowedContext, Telegraf, session } from 'telegraf';
 import { message } from 'telegraf/filters';
 import { code, pre } from 'telegraf/format';
 import config from 'config';
-import { ogg } from './convertors/ogg';
-import { openAI } from './openAI';
 import { ChatCompletionRequestMessage } from 'openai';
+
+import { ogg } from './convertors/ogg.js';
+import { openAI } from './openAI.js';
 
 interface SessionData {
     messages: Array<ChatCompletionRequestMessage>;
