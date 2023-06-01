@@ -1,4 +1,4 @@
-import { Context, NarrowedContext, Telegraf, session } from 'telegraf';
+import { Context, Telegraf, session } from 'telegraf';
 import { message } from 'telegraf/filters';
 import { code, pre } from 'telegraf/format';
 import config from 'config';
@@ -15,8 +15,18 @@ interface BotContext extends Context {
 }
 
 const bot = new Telegraf<BotContext>(config.get('TELEGRAM_TOKEN'));
+const allowedUserIds: number[] | null = config.get('ALLOWED_USERS');
 
 bot.use(session());
+
+bot.use(async (ctx, next) => {
+    const userId = ctx.message?.from.id;
+    if (userId && allowedUserIds?.includes(userId)) {
+        return await next();
+    }
+    ctx.reply(`Sorry, you are not allowed to use this bot.`);
+    return;
+});
 
 const textFmt = pre('en');
 
@@ -37,24 +47,18 @@ bot.on(message('text'), async (ctx) => {
     ctx.session ??= INITIAL_SESSION;
     try {
         await ctx.reply(code('Message recived, Processing...'));
-
         const text = ctx.message.text;
-
         const message = {
             role: openAI.roles.User,
             content: text,
         };
-
         ctx.session.messages.push(message);
-
         const response = await openAI.chat(ctx.session.messages);
         const replyMessage = {
             role: openAI.roles.Assistant,
             content: response?.content || '',
         };
-
         ctx.session.messages.push(replyMessage);
-
         if (response) {
             await ctx.reply(response.content);
         } else {
