@@ -29,7 +29,7 @@ class OggConverter {
                     .run();
             });
         } catch (e) {
-            console.error('Failed converting ogg file to mp3', e);
+            console.error('Failed converting ogg file to mp3');
             throw e;
         }
     }

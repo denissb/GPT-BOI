@@ -4,7 +4,7 @@ export const removeFile = async (path: string) => {
     try {
         await unlink(path);
     } catch (e) {
-        console.error('Error removing file', e);
+        console.error('Error removing file');
         throw e;
     }
 };

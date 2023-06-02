@@ -5,6 +5,7 @@ import config from 'config';
 import { ChatCompletionRequestMessage } from 'openai';
 
 import { ogg } from './convertors/ogg.js';
+import { removeFile } from './fileUtils.js';
 import { openAI } from './openAI.js';
 
 interface SessionData {
@@ -65,7 +66,7 @@ bot.on(message('text'), async (ctx) => {
             await ctx.reply(code('No response..'));
         }
     } catch (e) {
-        console.error('Error on voice message', e);
+        console.error('Error on text message', (e as Error).message);
     }
 });
 
@@ -73,13 +74,21 @@ bot.on(message('voice'), async (ctx) => {
     ctx.session ??= INITIAL_SESSION;
     try {
         await ctx.reply(code('Message recived, Processing...'));
-        const link = await ctx.telegram.getFileLink(ctx.message.voice.file_id);
-        const userId = String(ctx.message.from.id);
-        const oggPath = await ogg.create(link.href, userId);
-        const mp3Path = await ogg.toMp3(oggPath, userId);
+        const fileId = ctx.message.voice.file_id;
+        const link = await ctx.telegram.getFileLink(fileId);
+        const oggPath = await ogg.create(link.href, fileId);
+        const mp3Path = await ogg.toMp3(oggPath, fileId);
 
         const voiceAsText = await openAI.transcription(mp3Path);
-        await ctx.reply(code(`You said: ${voiceAsText}`));
+
+        removeFile(mp3Path).catch((e) => {
+            console.error(e.message);
+        });
+
+        ctx.reply(code(`You said: ${voiceAsText}`)).catch((e) => {
+            console.error('Error replying to message', e.message);
+        });
+
         const message = {
             role: openAI.roles.User,
             content: voiceAsText,
@@ -101,7 +110,7 @@ bot.on(message('voice'), async (ctx) => {
             await ctx.reply(code('No response..'));
         }
     } catch (e) {
-        console.error('Error on voice message', e);
+        console.error('Error on voice message', (e as Error).message);
     }
 });
 

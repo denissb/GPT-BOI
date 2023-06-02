@@ -23,7 +23,8 @@ class OpenAI {
 
             return response.data.choices[0].message;
         } catch (e) {
-            console.error('Error communicating with GPT chat', e);
+            console.error('Error communicating with GPT chat');
+            throw e;
         }
     }
 
@@ -33,7 +34,7 @@ class OpenAI {
             const response = await this.openAI.createTranscription(fileStream, 'whisper-1');
             return response.data.text;
         } catch (e) {
-            console.error('Failed trying to do a transcription', e);
+            console.error('Failed trying to do a transcription');
             throw e;
         }
     }
