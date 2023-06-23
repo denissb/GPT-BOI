@@ -2,13 +2,15 @@ import { Context, Telegraf, session } from 'telegraf';
 import { message } from 'telegraf/filters';
 import { code, pre } from 'telegraf/format';
 import config from 'config';
-import { ChatCompletionRequestMessage } from 'openai';
-
+import type { ChatCompletionRequestMessage, ChatCompletionFunctions } from 'openai';
 import { ogg } from './convertors/ogg.js';
 import { removeFile } from './fileUtils.js';
 import { openAI } from './openAI.js';
+import CoderFunction from './functions/coder.js';
+import { handleGPTResponse } from './responseParser.js';
 
 interface SessionData {
+    functions: Array<ChatCompletionFunctions>;
     messages: Array<ChatCompletionRequestMessage>;
 }
 interface BotContext extends Context {
@@ -33,6 +35,7 @@ const textFmt = pre('en');
 
 const INITIAL_SESSION = {
     messages: [],
+    functions: [],
 };
 
 const initNewSession = async (ctx: BotContext) => {
@@ -44,6 +47,19 @@ bot.command('new', async (ctx) => await initNewSession(ctx));
 
 bot.command('start', async (ctx) => await initNewSession(ctx));
 
+bot.command('function', async (ctx) => {
+    const command = ctx.message?.text.split(' ').pop()?.trim();
+    ctx.session ??= INITIAL_SESSION;
+    switch (command) {
+        case 'coder':
+            ctx.session?.functions.push(CoderFunction);
+            await ctx.reply(code('Now I am in coder mode'));
+            return;
+        default:
+            await ctx.reply(code('I do not support such a function..'));
+    }
+});
+
 bot.on(message('text'), async (ctx) => {
     ctx.session ??= INITIAL_SESSION;
     try {
@@ -54,19 +70,21 @@ bot.on(message('text'), async (ctx) => {
             content: text,
         };
         ctx.session.messages.push(message);
-        const response = await openAI.chat(ctx.session.messages);
+        const response = await openAI.chat(ctx.session.messages, ctx.session.functions);
         const replyMessage = {
             role: openAI.roles.Assistant,
             content: response?.content || '',
         };
         ctx.session.messages.push(replyMessage);
-        if (response) {
-            await ctx.reply(response.content);
+
+        if (response?.content || response?.function_call) {
+            await ctx.reply(handleGPTResponse(response));
         } else {
             await ctx.reply(code('No response..'));
         }
     } catch (e) {
         console.error('Error on text message', (e as Error).message);
+        await ctx.reply((e as Error).message);
     }
 });
 
@@ -96,7 +114,7 @@ bot.on(message('voice'), async (ctx) => {
 
         ctx.session.messages.push(message);
 
-        const response = await openAI.chat(ctx.session.messages);
+        const response = await openAI.chat(ctx.session.messages, ctx.session.functions);
         const replyMessage = {
             role: openAI.roles.Assistant,
             content: response?.content || '',
@@ -104,13 +122,14 @@ bot.on(message('voice'), async (ctx) => {
 
         ctx.session.messages.push(replyMessage);
 
-        if (response) {
-            await ctx.reply(response.content);
+        if (response?.content || response?.function_call) {
+            await ctx.reply(handleGPTResponse(response));
         } else {
             await ctx.reply(code('No response..'));
         }
     } catch (e) {
         console.error('Error on voice message', (e as Error).message);
+        await ctx.reply((e as Error).message);
     }
 });
 

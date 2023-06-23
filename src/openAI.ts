@@ -1,4 +1,10 @@
-import { ChatCompletionRequestMessage, ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi } from 'openai';
+import {
+    ChatCompletionRequestMessage,
+    ChatCompletionRequestMessageRoleEnum,
+    Configuration,
+    OpenAIApi,
+    ChatCompletionFunctions,
+} from 'openai';
 import config from 'config';
 import { createReadStream } from 'fs';
 
@@ -8,17 +14,18 @@ class OpenAI {
 
     roles = ChatCompletionRequestMessageRoleEnum;
 
-    constructor(apiKey: string, model = 'gpt-3.5-turbo') {
+    constructor(apiKey: string, model = 'gpt-3.5-turbo-0613') {
         const configuration = new Configuration({ apiKey });
         this.openAI = new OpenAIApi(configuration);
         this.model = model;
     }
 
-    async chat(messages: Array<ChatCompletionRequestMessage>) {
+    async chat(messages: Array<ChatCompletionRequestMessage>, functions?: Array<ChatCompletionFunctions>) {
         try {
             const response = await this.openAI.createChatCompletion({
                 model: this.model,
                 messages,
+                functions: functions?.length ? functions : undefined,
             });
 
             return response.data.choices[0].message;
