@@ -7,7 +7,7 @@ import { ogg } from './convertors/ogg.js';
 import { removeFile } from './fileUtils.js';
 import { openAI } from './openAI.js';
 import CoderFunction from './functions/coder.js';
-import { handleGPTResponse } from './responseParser.js';
+import { handleGPTResponse } from './openAIResponseHandling.js';
 
 interface SessionData {
     functions: Array<ChatCompletionFunctions>;
