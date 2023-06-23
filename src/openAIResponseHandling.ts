@@ -21,6 +21,8 @@ export function handleGPTResponse(response: ChatCompletionResponseMessage) {
     }
 }
 
+// This is the best I could come up with for trying to return a presentable response
+// based on what ChatGPT can spit out as a response to a function call returning blocks of code
 export function parseCodeResponse(data?: string) {
     if (data) {
         const startPrefixTypes = ['"code": "', '"code": `'];
