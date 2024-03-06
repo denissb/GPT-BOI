@@ -1,8 +1,8 @@
 import CoderFunction from './functions/coder.js';
 import { code } from 'telegraf/format';
-import type { ChatCompletionResponseMessage } from 'openai';
+import type OpenAI from 'openai';
 
-export function handleGPTResponse(response: ChatCompletionResponseMessage) {
+export function handleGPTResponse(response: OpenAI.ChatCompletionMessage) {
     if (response.function_call) {
         const functionCall = response.function_call;
         switch (functionCall.name) {

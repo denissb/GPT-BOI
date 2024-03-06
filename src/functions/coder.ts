@@ -1,6 +1,6 @@
-import type { ChatCompletionFunctions } from 'openai';
+import type OpenAI from 'openai';
 
-const CoderFunction: ChatCompletionFunctions = {
+const CoderFunction: OpenAI.Chat.ChatCompletionCreateParams.Function = {
     name: 'write_code',
     description:
         'Provide a code solution to the specified problem in the requested programming or scripting language, if the requested language is not provided use TypeScript',

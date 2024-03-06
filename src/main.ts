@@ -2,16 +2,16 @@ import { Context, Telegraf, session } from 'telegraf';
 import { message } from 'telegraf/filters';
 import { code, pre } from 'telegraf/format';
 import config from 'config';
-import type { ChatCompletionRequestMessage, ChatCompletionFunctions } from 'openai';
+import type OpenAI from 'openai';
 import { ogg } from './convertors/ogg.js';
 import { removeFile } from './fileUtils.js';
-import { openAI } from './openAI.js';
+import { openAI } from './openAIApi.js';
 import CoderFunction from './functions/coder.js';
 import { handleGPTResponse } from './openAIResponseHandling.js';
 
 interface SessionData {
-    functions: Array<ChatCompletionFunctions>;
-    messages: Array<ChatCompletionRequestMessage>;
+    functions: Array<OpenAI.ChatCompletionCreateParams.Function>;
+    messages: Array<OpenAI.ChatCompletionMessageParam>;
 }
 interface BotContext extends Context {
     session?: SessionData;
@@ -66,16 +66,16 @@ bot.on(message('text'), async (ctx) => {
         await ctx.reply(code('Message recived, Processing...'));
         const text = ctx.message.text;
         const message = {
-            role: openAI.roles.User,
+            role: 'user',
             content: text,
         };
-        ctx.session.messages.push(message);
+        ctx.session.messages.push(message as OpenAI.ChatCompletionFunctionMessageParam);
         const response = await openAI.chat(ctx.session.messages, ctx.session.functions);
         const replyMessage = {
-            role: openAI.roles.Assistant,
+            role: 'assistant',
             content: response?.content || '',
         };
-        ctx.session.messages.push(replyMessage);
+        ctx.session.messages.push(replyMessage as OpenAI.ChatCompletionAssistantMessageParam);
 
         if (response?.content || response?.function_call) {
             await ctx.reply(handleGPTResponse(response));
@@ -108,19 +108,19 @@ bot.on(message('voice'), async (ctx) => {
         });
 
         const message = {
-            role: openAI.roles.User,
+            role: 'user',
             content: voiceAsText,
         };
 
-        ctx.session.messages.push(message);
+        ctx.session.messages.push(message as OpenAI.ChatCompletionUserMessageParam);
 
         const response = await openAI.chat(ctx.session.messages, ctx.session.functions);
         const replyMessage = {
-            role: openAI.roles.Assistant,
+            role: 'assistant',
             content: response?.content || '',
         };
 
-        ctx.session.messages.push(replyMessage);
+        ctx.session.messages.push(replyMessage as OpenAI.ChatCompletionAssistantMessageParam);
 
         if (response?.content || response?.function_call) {
             await ctx.reply(handleGPTResponse(response));
