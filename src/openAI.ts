@@ -14,7 +14,7 @@ class OpenAI {
 
     roles = ChatCompletionRequestMessageRoleEnum;
 
-    constructor(apiKey: string, model = 'gpt-3.5-turbo-0613') {
+    constructor(apiKey: string, model = 'gpt-4-turbo-preview') {
         const configuration = new Configuration({ apiKey });
         this.openAI = new OpenAIApi(configuration);
         this.model = model;
