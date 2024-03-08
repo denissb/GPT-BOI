@@ -7,7 +7,7 @@ class OpenAIApi {
     openAI: OpenAI;
     model: string;
 
-    constructor(apiKey: string, model = 'gpt-3.5-turbo') {
+    constructor(apiKey: string, model = 'gpt-4-turbo-preview') {
         this.openAI = new OpenAI({ apiKey });
         this.model = model;
     }
